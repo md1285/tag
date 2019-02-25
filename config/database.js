@@ -1,10 +1,11 @@
 const mongoose = require('mongoose');
 
-mongoose.connect('mongodb://localhost/tag', {useNewUrlParser: true});
+//use below when not seeding
+mongoose.connect(process.env.DATABASE_URL, {useNewUrlParser: true});
 
-// shortcut to mongoose.connection object
-var db = mongoose.connection;
+//use below when seeding
+// mongoose.connect('mongodb://localhost:27017/tag', {useNewUrlParser: true});
 
-db.on('connected', function() {
-    console.log(`Connected to MongoDB at ${db.host}:${db.port}`);
+mongoose.connection.on('connected', function() {
+    console.log(`Connected to MongoDB at ${process.env.DATABASE_URL}`);
 });

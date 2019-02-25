@@ -1,0 +1,19 @@
+<%- include ../partials/header.ejs %>
+
+    <h1>Tag</h1>
+    <% if (user) { %>
+    <p>Welcome back, <%= user.name.match(/[^\s]+/) %></p>
+    <% } else { %>
+        <p>Welcome to Tag</p>
+    <% } %>
+
+    <h1>new proj page</h1>
+    <form class="project-form" action="/projects" method="POST">
+        <label>Project Name:
+            <input class="white" type="text" name="name">
+        </label>
+        <textarea class="white" name="pendingVersion" rows="400" cols="100"></textarea>
+        <input type="submit" value="Create">
+    </form>
+
+<%- include ../partials/footer.ejs %>

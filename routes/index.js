@@ -16,7 +16,7 @@ router.get('/auth/google', passport.authenticate(
 router.get('/oauth2callback', passport.authenticate(
     'google',
     {
-        successRedirect: '/', /* update these paths to where we want users redirected after logging in */
+        successRedirect: '/projects', /* update these paths to where we want users redirected after logging in */
         failureRedirect: '/'
     }
 ));

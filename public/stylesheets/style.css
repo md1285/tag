@@ -13,12 +13,14 @@ a:hover {
 
 .project-form {
   height: 500px;
-  width: 75vw;
+  width: 80vw;
 }
 
 /* below for testing only, organize better for display */
 .content-display { 
-  white-space: pre; 
+  white-space: pre;
+  height: 500px;
+  width: 75vw; 
 }
 
 .search-bar {

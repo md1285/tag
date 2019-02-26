@@ -1,15 +1,10 @@
 <%- include ../partials/header.ejs %>
 
-<h1>Tag</h1>
-<% if (user) { %>
-<p>Welcome back, <%= user.name.match(/[^\s]+/) %></p>
-<% } else { %>
-<p>Welcome to Tag</p>
-<% } %>
 
-<h2><%= project.name %></h2>
+<h4><%= project.name %></h4>
 <form action="/projects/<%= project.id %>" method="POST">
     <textarea class="content-display white" cols="30" rows="10" name="content"><%= project.getCurrentVersion().content %></textarea>
+    <br>
     <button class="btn" type="submit">Submit Edit</button>
 </form>
     

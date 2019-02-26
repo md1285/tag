@@ -1,19 +1,13 @@
 <%- include ../partials/header.ejs %>
 
-<h1>Tag</h1>
-<% if (user) { %>
-<p>Welcome back, <%= user.name.match(/[^\s]+/) %></p>
-<% } else { %>
-<p>Welcome to Tag</p>
-<% } %>
-
-<h2><%= project.name %> (needs approval)</h2>
+<h4><%= project.name %></h4>
 <textarea readonly class="content-display white" cols="30" rows="10"><%= project.pendingVersion.content %></textarea>
 
 <!-- below code activates approval button if current user is included in project but not in approvals -->
 <% if (JSON.stringify(project.users).includes(JSON.stringify(user.id)) && !JSON.stringify(project.approvals).includes(JSON.stringify(user.id))) { %>
-<a href="#" class="btn">Approve Edit</a>
-<a href="#" class="btn red">Reject Edit</a>
+<br>
+<a href="/projects/<%= project.id %>/approve" class="btn">Approve Edit</a>
+<a href="/projects/<%= project.id %>/reject" class="btn red">Reject Edit</a>
 <% } %>
 
 <h4>Current collaborators:</h4>

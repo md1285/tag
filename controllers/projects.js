@@ -8,7 +8,31 @@ module.exports = {
     show,
     searchPage,
     searchResults,
-    addUser
+    addUser,
+    submit
+}
+
+function submit(req, res){
+    Project.findById(req.params.id)
+    .then(function(project){
+        if (project.approvals[0]){
+            res.redirect(`/projects/${req.params.id}`)
+        } else {
+            project.approvals.push(req.user.id);
+            if (JSON.stringify(project.approvals.sort()) === JSON.stringify(project.users.sort())) {
+                project.versions.push({content: req.body.content, approved: true});
+                project.approvals = [];
+                project.save(function(err){
+                    res.redirect(`/projects/${req.params.id}`);
+                })
+            } else {
+                project.pendingVersion = {content: req.body.content, approved: false};
+                project.save(function(err){
+                    res.redirect(`/projects/${req.params.id}`);
+                })
+            }
+        }
+    })
 }
 
 function addUser(req, res){

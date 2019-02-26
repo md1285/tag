@@ -3,6 +3,7 @@
 require('dotenv').config();
 require('./config/database');
 const Project = require('./models/project');
+const User = require('./models/user');
 const data = require('./data');
 
 Project.deleteMany({})
@@ -16,5 +17,33 @@ Project.deleteMany({})
     });
 })
 .then(function(){
+    return User.deleteMany({});
+})
+.then(function(){
+    return User.create(data.users);
+})
+.then(function(users){
+    console.log(users);
+})
+.then(function(){
     process.exit();
 });
+
+// Project.deleteMany({})
+// .then(function(){
+//     User.deleteMany({});
+// })
+// .then(function(){
+//     Project.create(data.projects);
+// })
+// .then(function(){
+//     User.create(data.users);
+// })
+// .then(function(){
+//     process.exit;
+// });
+
+// Project.deleteMany({})
+// .then(function(){
+//     process.exit;
+// });

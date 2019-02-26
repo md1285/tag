@@ -1,0 +1,26 @@
+<%- include ../partials/header.ejs %>
+
+<h1>Tag</h1>
+<% if (user) { %>
+<p>Welcome back, <%= user.name.match(/[^\s]+/) %></p>
+<% } else { %>
+<p>Welcome to Tag</p>
+<% } %>
+
+<h2><%= project.name %></h2>
+<textarea class="content-display white" cols="30" rows="10"> <%= project.getCurrentVersion().content %></textarea>
+
+<h4>Current collaborators:</h4>
+<ul>
+    <% project.users.forEach(function(user){ %>
+    <li>
+        <%= user.name %>, <%= user.email %>
+    </li>
+    <% }); %>
+</ul>
+
+<% if (JSON.stringify(project.users).includes(JSON.stringify(user.id)))  {%>
+<a class="btn" href="/projects/<%= project._id %>/search">Add new collaborator</a>
+<% } %>
+
+<%- include ../partials/footer.ejs %>

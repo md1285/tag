@@ -1,0 +1,14 @@
+<%- include ../partials/header.ejs %>
+
+    <h1>Tag</h1>
+    <% if (user) { %>
+    <p>Welcome back, <%= user.name.match(/[^\s]+/) %></p>
+    <% } else { %>
+        <p>Welcome to Tag</p>
+    <% } %>
+
+    <h2>My Projects</h2>
+        <% projects.forEach(function(project){ %>
+            <h5><a href="/projects/<%= project._id %>"><%= project.name %></a></a></h5>
+        <% }); %>
+<%- include ../partials/footer.ejs %>

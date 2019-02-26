@@ -1,0 +1,26 @@
+<%- include ../partials/header.ejs %>
+
+    <h1>Tag</h1>
+    <% if (user) { %>
+    <p>Welcome back, <%= user.name.match(/[^\s]+/) %></p>
+    <% } else { %>
+        <p>Welcome to Tag</p>
+    <% } %>
+
+    <h3>Search Results</h3>
+    <div>
+        <p>
+            User: <%= foundUser.name %>
+        </p>
+        <p>
+            Email: <%= foundUser.email %>
+        </p>
+        <% if (JSON.stringify(project.users).includes(JSON.stringify(foundUser.id))) { %>
+            <p><%= foundUser.name.match(/[^\s]+/) %> is already collaborating on <%= title %></p>
+        <% } else { %>
+        <form action="/projects/<%= project.id %>/invite" method="POST">
+            <button class="btn" name="inviteId" value="<%= foundUser.id %>">Add <%= foundUser.name.match(/[^\s]+/) %> to <%= title %></button>
+        </form>
+        <% } %>
+    </div>
+<%- include ../partials/footer.ejs %>

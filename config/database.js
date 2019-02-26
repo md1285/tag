@@ -3,7 +3,8 @@ const mongoose = require('mongoose');
 //use below when not seeding
 mongoose.connect(process.env.DATABASE_URL, {useNewUrlParser: true});
 
-//use below when seeding
+// console.log(process.env.DATABASE_URL);
+//use below when seeding and logging
 // mongoose.connect('mongodb://localhost:27017/tag', {useNewUrlParser: true});
 
 mongoose.connection.on('connected', function() {

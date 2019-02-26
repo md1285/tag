@@ -1,0 +1,15 @@
+<%- include ../partials/header.ejs %>
+
+    <h1>Tag</h1>
+    <% if (user) { %>
+    <p>Welcome back, <%= user.name.match(/[^\s]+/) %></p>
+    <% } else { %>
+        <p>Welcome to Tag</p>
+    <% } %>
+
+    <h3>Find a user to add to <%= project.name %></h3>
+    <form action="/projects/<%= project.id %>/search" method="POST">
+        <input type="text" class="white blue-txt" name="email" placeholder="Enter an email address" required>
+        <button class="btn" type="submit">Search</button>
+    </form>
+<%- include ../partials/footer.ejs %>

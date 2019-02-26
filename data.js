@@ -1,17 +1,12 @@
 exports.projects = [
     {
       name: 'Project A',
-      versions: [{content: 'aaaa'}, {content: 'bbbb'}, {content: 'ccccc'}],
-      pendingVersion: {content: 'ddddd'}
-    },
-    {     
-      name: 'Project B', 
-      versions: [{content: '11111'}, {content: '22222'}, {content: '33333'}],
-      pendingVersion: {content: '44444'}
+      versions: [{content: 'aaaa', approved: true}, {content: 'bbbb', approved: false}, {content: 'ccccc', approved: true}],
+      pendingVersion: {content: 'ddddd', approved: null}
     },
     {      
-      name: 'Project C',
-      versions: [{content: 'xxxxx'}, {content: 'yyyyy'}, {content: 'zzzzz'}],
+      name: 'Project B',
+      versions: [{content: 'xxxxx', approved: true}],
       pendingVersion: null
     }
   ];

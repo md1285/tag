@@ -1,5 +1,6 @@
 // utility to initialize database
 
+require('dotenv').config();
 require('./config/database');
 const Project = require('./models/project');
 const data = require('./data');

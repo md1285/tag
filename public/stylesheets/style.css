@@ -16,14 +16,46 @@ a:hover {
   width: 80vw;
 }
 
-/* below for testing only, organize better for display */
 .content-display { 
   white-space: pre;
   height: 500px;
   width: 75vw; 
 }
 
+.proj-name {
+  width: 75vw !important; 
+  height: 35px !important;
+}
+
 .search-bar {
   background-color: #26A59A;
   color: #26A59A;
+}
+
+.edit-proj-hdr {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  align-items: center;
+}
+
+.approval-btn {
+  border-radius: 0 !important;
+}
+
+.approval-btn:hover {
+  cursor: default;
+}
+
+.show-lock-h4 {
+  padding: 0;
+  margin: 10px 10px 10px 0;
+}
+
+.coll-width {
+  width: 60%;
+}
+
+.proj-item {
+  font-size: 16px;
 }

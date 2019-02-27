@@ -12,12 +12,9 @@
 
 <body class="black white-text">
   <nav class="black center-align">
-    <% if (user) {  console.log(user._id)%>
+    <% if (user) { %>
     <a href="/logout" class="btn">Log Out<i></i></a>
-    <% if (title !== "New Project Page") { %>
-    <a href="/projects/new" class="btn">Create New Project</a>
-    <% } %>
-    <a href="/projects" class="btn">View Projects</a>
+    <a href="/projects" class="btn">Projects</a>
     <% } else { %>
     <a href="/auth/google" class="btn">Login with Google<i></i></a>
     <% } %>

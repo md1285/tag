@@ -150,24 +150,37 @@ function searchPage(req, res) {
 
 //displays a project
 function show(req, res, next) {
-    Project.findById(req.params.id).populate('users')
-        .then(function (project) {
-            //if approvals array contains no data, proj is editable
-            if (!project.approvals[0]) {
-                res.render('projects/show-edit', {
-                    title: project.name,
-                    user: req.user,
-                    project,
-                });
-                //otherwise, it is locked
+    //if there is a logged in user
+    if (req.user) {
+        //find the project with req.params.id
+        Project.findById(req.params.id).populate('users')
+            //if logged in user is an approved user on this project
+            if (JSON.stringify(project.users).includes(JSON.stringify(req.user.id))) {
+                .then(function (project) {
+                    //if approvals array contains no data, proj is editable
+                    if (!project.approvals[0]) {
+                        res.render('projects/show-edit', {
+                            title: project.name,
+                            user: req.user,
+                            project,
+                        });
+                    //otherwise, it is locked
+                    } else {
+                        res.render('projects/show-lock', {
+                            title: project.name,
+                            user: req.user,
+                            project,
+                        });
+                    }
+                })  
+            //if not, redirect to home    
             } else {
-                res.render('projects/show-lock', {
-                    title: project.name,
-                    user: req.user,
-                    project,
-                });
+                res.redirect('/');
             }
-        })
+    //if not, redirect to home
+    } else {
+        res.redirect('/');
+    }
 }
 
 //finds all projects containing the current logged in user's user id (req.user) in the project's "users" array.

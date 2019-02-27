@@ -99,64 +99,111 @@ function submit(req, res) {
 
 //adds a user to current project
 function addUser(req, res) {
-    Project.findById(req.params.id)
-        .then(function (project) {
-            if (JSON.stringify(project.users).includes(JSON.stringify(req.body.inviteId))) {
-                res.redirect(`/projects/${req.params.id}`);
-            } else {
-                project.users.push(req.body.inviteId);
-                project.save(function (err) {
-                    res.redirect(`/projects/${req.params.id}`);
-                });
-            }
-        })
+    //if there is a logged in user...
+    if (req.user) {
+        //query the db for a project with id equal to req.params.id, populating the users
+        Project.findById(req.params.id)
+            .populate('users')
+            .then(function (project) {
+                //if current user is authorized on this proj...
+                if (project.users.filter(user => user.id === req.user.id)[0]) {
+                    //if the user we are attempting to invite already exists on the project's users array...
+                    if (project.users.filter(user => user.id === req.body.inviteId)[0]) {
+                        //redirect to project page
+                        res.redirect(`/projects/${req.params.id}`);
+                    //if the user we are attempting to invite does not exist on the project's users array...
+                    } else {
+                        //push the invited user into the project's user's array
+                        project.users.push(req.body.inviteId);
+                        //save the project to the db
+                        project.save(function (err) {
+                            //and redirect back to the project page
+                            res.redirect(`/projects/${req.params.id}`);
+                        });
+                    }
+                //if current user is not authorized on this proj, redirect to home
+                } else {
+                    res.redirect('/');
+                }
+            })
+    //if there is not a logged in user, redirect to home
+    } else {
+        res.redirect('/');
+    }
 }
 
 //displays search result to add to project
 function searchResults(req, res) {
-    let foundUser;
-    let project;
-    User.findOne({ email: req.body.email })
-        .then(function (searchResult) {
-            foundUser = searchResult;
+    //a. if there is a logged in user...
+    if (req.user) {
+        //b. create queriedProj variable
+        let queriedProj;
+        //c. query the database to find the project defined by the req.params.id, populating users array
+        Project.findById(req.params.id)
+        .populate('users')
+        .then(function(project){
+            //d. if the logged in user is an authorized user on this project...
+            if (project.users.filter(user => user.id === req.user.id)[0]){
+                //e. assign queriedProj the project that we found in step c.
+                queriedProj = project;
+                //f. query the database for the user with the email address entered in the search
+                User.findOne({ email: req.body.email })                    
+                    .then(function (foundUser) {
+                        //g. render the page "projects/search-results", passing it the logged in user data, the user found from the search, and the project found from the req.params.id
+                        res.render('projects/search-results', {
+                            title: project.name,
+                            user: req.user,
+                            foundUser,
+                            project: queriedProj
+                        });
+                    });   
+            //if not, redirect to home
+            } else {
+                res.redirect('/');
+            }
         })
-        .then(function () {
-            return Project.findById(req.params.id);
-        })
-        .then(function (queryResult) {
-            project = queryResult;
-        })
-        .then(function () {
-            res.render('projects/search-results', {
-                title: project.name,
-                user: req.user,
-                foundUser,
-                project
-            });
-        });
+    //if not, redirect to home
+    } else {
+        res.redirect('/');
+    }
 }
 
 //displays search page to find a user to add to project
 function searchPage(req, res) {
-    Project.findById(req.params.id)
-        .then(function (project) {
-            res.render('projects/search-users', {
-                title: project.name,
-                user: req.user,
-                project
+    //if there is a logged in user...
+    if (req.user){
+        //query the db for project in req.params.id, populating the users array
+        Project.findById(req.params.id)
+            .populate('users')
+            .then(function (project) {
+                //if the project's users array contains the logged in user's id...
+                if (project.users.filter(user => user.id === req.user.id)[0]) {
+                    //render search users page
+                    res.render('projects/search-users', {
+                        title: project.name,
+                        user: req.user,
+                        project
+                    });
+                //if not, redirect to home
+                } else {
+                    res.redirect('/');
+                }
             });
-        });
+    //if not, redirect to home
+    } else {
+        res.redirect('/');
+    }
 }
 
 //displays a project
 function show(req, res, next) {
-    //if there is a logged in user
+    //if there is a logged in user...
     if (req.user) {
-        //find the project with req.params.id
+        //find the project in the req.params.id, populating the users...
         Project.findById(req.params.id).populate('users')
-            //if logged in user is an approved user on this project
-            if (JSON.stringify(project.users).includes(JSON.stringify(req.user.id))) {
-                .then(function (project) {
+            .then(function (project) {
+                //if the logged in user is an approved user on the project...
+                if(project.users.filter(user => user.id === req.user.id)[0]){
                     //if approvals array contains no data, proj is editable
                     if (!project.approvals[0]) {
                         res.render('projects/show-edit', {
@@ -172,21 +219,22 @@ function show(req, res, next) {
                             project,
                         });
                     }
-                })  
-            //if not, redirect to home    
-            } else {
-                res.redirect('/');
-            }
+                //if not, redirect to home
+                } else {
+                    res.redirect('/');
+                }
+            })
     //if not, redirect to home
     } else {
         res.redirect('/');
     }
 }
 
-//finds all projects containing the current logged in user's user id (req.user) in the project's "users" array.
-//then displays "projects", passing the user and project information to the view
+//display all logged in user's projects
 function index(req, res, next) {
+    //if there is a logged in user
     if (req.user) {
+        //query the db for all projects that include logged in user and display them
         Project.find({ users: { $in: [req.user] }, }, function (err, projects) {
             res.render('projects', {
                 title: 'My Projects',
@@ -194,6 +242,7 @@ function index(req, res, next) {
                 projects
             });
         });
+    //if not, redirect to home
     } else {
         res.redirect('/');
     }
@@ -212,6 +261,7 @@ function newProject(req, res, next) {
 
 //creates a new project
 function create(req, res, next) {
+    //if a user is logged in...
     if (req.user) {
         //assign init version to first value of versions array
         req.body.versions = [{ content: req.body.initVersion.slice(), approved: true }];
@@ -225,6 +275,7 @@ function create(req, res, next) {
             if (err) return res.redirect('/');
             res.redirect('projects');
         });
+    //if not, redirect to home
     } else {
         res.redirect('/');
     }

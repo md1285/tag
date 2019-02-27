@@ -14,6 +14,7 @@ module.exports = {
     reject
 }
 
+//rejects an edit
 function reject(req, res) {
     Project.findById(req.params.id)
         .then(function (project) {
@@ -38,6 +39,7 @@ function reject(req, res) {
         });
 }
 
+//approves an edit
 function approve(req, res) {
     Project.findById(req.params.id)
         .then(function (project) {
@@ -71,6 +73,7 @@ function approve(req, res) {
         });
 }
 
+//submits an edit
 function submit(req, res) {
     Project.findById(req.params.id)
         .then(function (project) {
@@ -94,6 +97,7 @@ function submit(req, res) {
         })
 }
 
+//adds a user to current project
 function addUser(req, res) {
     Project.findById(req.params.id)
         .then(function (project) {
@@ -108,6 +112,7 @@ function addUser(req, res) {
         })
 }
 
+//displays search result to add to project
 function searchResults(req, res) {
     let foundUser;
     let project;
@@ -131,6 +136,7 @@ function searchResults(req, res) {
         });
 }
 
+//displays search page to find a user to add to project
 function searchPage(req, res) {
     Project.findById(req.params.id)
         .then(function (project) {
@@ -142,6 +148,7 @@ function searchPage(req, res) {
         });
 }
 
+//displays a project
 function show(req, res, next) {
     Project.findById(req.params.id).populate('users')
         .then(function (project) {
@@ -166,34 +173,47 @@ function show(req, res, next) {
 //finds all projects containing the current logged in user's user id (req.user) in the project's "users" array.
 //then displays "projects", passing the user and project information to the view
 function index(req, res, next) {
-    Project.find({ users: { $in: [req.user] }, }, function (err, projects) {
-        res.render('projects', {
-            title: 'My Projects',
-            user: req.user,
-            projects
+    if (req.user) {
+        Project.find({ users: { $in: [req.user] }, }, function (err, projects) {
+            res.render('projects', {
+                title: 'My Projects',
+                user: req.user,
+                projects
+            });
         });
-    });
+    } else {
+        res.redirect('/');
+    }
 }
-//display new projects page
+//displays new projects page
 function newProject(req, res, next) {
-    res.render('projects/new', {
-        title: 'New Project Page',
-        user: req.user,
-    });
+    if (req.user) {
+        res.render('projects/new', {
+            title: 'New Project Page',
+            user: req.user,
+        });
+    } else {
+        res.redirect('/');
+    }
 }
 
+//creates a new project
 function create(req, res, next) {
-    //assign init version to first value of versions array
-    req.body.versions = [{ content: req.body.initVersion.slice(), approved: true }];
-    //assign user id to users array
-    req.body.users = [req.user._id];
-    //delete initVersion from req.body
-    delete req.body.initVersion;
-    //create new project with req.body data
-    let project = new Project(req.body);
-    project.save(function (err) {
-        if (err) return res.redirect('/');
-        res.redirect('projects');
-    });
+    if (req.user) {
+        //assign init version to first value of versions array
+        req.body.versions = [{ content: req.body.initVersion.slice(), approved: true }];
+        //assign user id to users array
+        req.body.users = [req.user._id];
+        //delete initVersion from req.body
+        delete req.body.initVersion;
+        //create new project with req.body data
+        let project = new Project(req.body);
+        project.save(function (err) {
+            if (err) return res.redirect('/');
+            res.redirect('projects');
+        });
+    } else {
+        res.redirect('/');
+    }
 }
 

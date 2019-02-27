@@ -75,26 +75,51 @@ function approve(req, res) {
 
 //submits an edit
 function submit(req, res) {
-    Project.findById(req.params.id)
-        .then(function (project) {
-            if (project.approvals[0]) {
-                res.redirect(`/projects/${req.params.id}`)
-            } else {
-                project.approvals.push(req.user.id);
-                if (JSON.stringify(project.approvals.sort()) === JSON.stringify(project.users.sort())) {
-                    project.versions.push({ content: req.body.content, approved: true });
-                    project.approvals = [];
-                    project.save(function (err) {
-                        res.redirect(`/projects/${req.params.id}`);
-                    })
+    //if there is a logged in user...
+    if (req.user) {
+        //query the db to find project with id === req.params.id, populating the users array
+        Project.findById(req.params.id)
+            .populate('users')
+            .then(function (project) {
+                //if the logged in user is an approved user for this project...
+                if (project.users.filter(user => user.id === req.user.id)[0]) {
+                    //if the project has pending approvals...
+                    if (project.approvals[0]) {
+                        res.redirect(`/projects/${req.params.id}`)
+                    //if the project has no pending approvals...
+                    } else {
+                        //push the logged in user into the approvals array
+                        project.approvals.push(req.user.id);
+                        //if the users array is the same length as the users array (should only happen on single user projects)...
+                        if (project.approvals.length === project.users.length) {
+                            //push a new version into the proj's versions array with content from the submission and approved: true
+                            project.versions.push({ content: req.body.content, approved: true });
+                            //clear the project approvals array
+                            project.approvals = [];
+                            //save project and redirect to project show page
+                            project.save(function (err) {
+                                res.redirect(`/projects/${req.params.id}`);
+                            })
+                        //if users array is not the same length as approvals array (i.e., if there are multiple users on a project)
+                        } else {
+                            //make a pending version on the current project, with content from the submission and approved: false 
+                            project.pendingVersion = { content: req.body.content, approved: false };
+                            //save the project and redirect to project show page
+                            project.save(function (err) {
+                                res.redirect(`/projects/${req.params.id}`);
+                            })
+                        }
+                    }
+                //if the logged in user is NOT an approved user for this project...
                 } else {
-                    project.pendingVersion = { content: req.body.content, approved: false };
-                    project.save(function (err) {
-                        res.redirect(`/projects/${req.params.id}`);
-                    })
-                }
-            }
-        })
+                    res.redirect('/');
+                } 
+            })
+    //if there is not a logged in user...
+    } else {
+        //redirect to home
+        res.redirect('/');
+    }
 }
 
 //adds a user to current project
@@ -200,7 +225,8 @@ function show(req, res, next) {
     //if there is a logged in user...
     if (req.user) {
         //find the project in the req.params.id, populating the users...
-        Project.findById(req.params.id).populate('users')
+        Project.findById(req.params.id)
+            .populate('users')
             .then(function (project) {
                 //if the logged in user is an approved user on the project...
                 if(project.users.filter(user => user.id === req.user.id)[0]){

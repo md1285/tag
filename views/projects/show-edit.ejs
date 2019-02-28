@@ -1,13 +1,27 @@
 <%- include ../partials/header.ejs %>
 
-
-<h4><%= project.name %></h4>
-<form action="/projects/<%= project.id %>" method="POST">
-    <textarea class="content-display white" cols="30" rows="10" name="content"><%= project.getCurrentVersion().content %></textarea>
+<!-- <form action="/projects/<%= project.id %>" method="POST">
+    <textarea class="content-display white" name="content" wrap="hard"
+    cols="100"><%= project.getCurrentVersion().content %></textarea>
     <br>
     <button class="btn" type="submit">Submit Edit</button>
-</form>
-    
+</form> -->
+
+<div class="row">
+    <form class="col s12" action="/projects/<%= project.id %>" method="POST">
+        <div class="row">
+            <div class="input-field col s12">
+                <h4><%= project.name %></h4>
+                <textarea class="materialize-textarea white"
+                    name="content"><%= project.getCurrentVersion().content %></textarea>
+                <!-- <label for="textarea1"><%= project.name %></label> -->
+                <input class="btn" type="submit" value="Save">
+            </div>
+        </div>
+    </form>
+</div>
+
+
 
 <h4>Current collaborators:</h4>
 <ul>

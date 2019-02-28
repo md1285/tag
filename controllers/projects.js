@@ -16,61 +16,83 @@ module.exports = {
 
 //rejects an edit
 function reject(req, res) {
-    Project.findById(req.params.id)
-        .then(function (project) {
-            // 1. check to see is the logged in user is not an authorized user on this project
-            if (!req.user.id || !JSON.stringify(project.users).includes(req.user.id)) {
-                // a. if user not authorized, redirect to home
-                res.redirect('/');
-            } else {
-                // b. if user is authorized, continue...
-                // 2.  clear approvals array
-                project.approvals = [];
-                // 3. push pending version into versions array with approval: false
-                project.pendingVersion.approved = false;
-                project.versions.push(project.pendingVersion);
-                // 4. set pending version to null
-                project.pendingVersion = null;
-                // 5. save project and redirect to project page
-                project.save(function (err) {
-                    res.redirect(`/projects/${req.params.id}`);
-                })
-            }
-        });
+    //if a logged in user exists...
+    if (req.user) {
+        //query the db for the project with project id === req.params.id and populate users array
+        Project.findById(req.params.id)
+            .populate('users')
+            .then(function (project) {
+                //if the logged in user is in the project's users array
+                if (project.users.filter(user => user.id === req.user.id)[0]) {
+                    //clear approvals array
+                    project.approvals = [];
+                    //push pending version into versions array with approval: false
+                    project.pendingVersion.approved = false;
+                    project.versions.push(project.pendingVersion);
+                    //set pending version to null
+                    project.pendingVersion = null;
+                    //save project and redirect to project page
+                    project.save(function (err) {
+                        res.redirect(`/projects/${req.params.id}`);
+                    })
+                //if the logged in user is NOT in the project's users array
+                } else {
+                    //redirect to home
+                    res.redirect('/');
+                }
+            });
+        //if a logged in user does not exist...
+    } else {
+        res.redirect('/');
+    }
 }
 
 //approves an edit
 function approve(req, res) {
-    Project.findById(req.params.id)
-        .then(function (project) {
-            if (!req.user.id || !JSON.stringify(project.users).includes(JSON.stringify(req.user.id)) || JSON.stringify(project.approvals).includes(JSON.stringify(req.user.id))) {
-                //what to do if user is not logged in or not authorized user on this project, OR has already approved this edit
-                res.redirect('/');
-            } else {
-                //everything below here is what happens if user is logged in, authorized on this project, and has not approved current edit
-                project.approvals.push(req.user.id);
-                //below checks to see if approvals array now matches users array    
-                if (JSON.stringify(project.approvals.sort()) === JSON.stringify(project.users.sort())) {
-                    //if so...
-                    // a. push the pendingVersion into the versions array with approved: true, 
-                    project.pendingVersion.approved = true;
-                    project.versions.push(project.pendingVersion);
-                    // b. clear out the approvals array
-                    project.approvals = [];
-                    // c. set pending version to null
-                    project.pendingVersion = null;
-                    // d. save project
-                    project.save(function (err) {
-                        // e. redirect to project page
-                        res.redirect(`/projects/${req.params.id}`);
-                    })
+    //if there is a logged in user...
+    if (req.user) {
+        //query the db for the project with id === req.params.id, populating the users and approvals arrays
+        Project.findById(req.params.id)
+            .populate('users')
+            .populate('approvals')
+            .then(function (project) {
+                console.log(project);
+                //if user's id exists in the approved users array but does not exist on the approvals array...
+                if (project.users.filter(user => user.id === req.user.id)[0] && !project.approvals.filter(user => user.id === req.user.id)[0]) {
+                    //push the logged in user's id into the approvals array
+                    project.approvals.push(req.user.id);
+                    //if approvals array length now matches users array length...    
+                    if (project.approvals.length === project.users.length) {
+                        // a. push the pendingVersion into the versions array with approved: true, 
+                        project.pendingVersion.approved = true;
+                        project.versions.push(project.pendingVersion);
+                        // b. clear out the approvals array
+                        project.approvals = [];
+                        // c. set pending version to null
+                        project.pendingVersion = null;
+                        // d. save project
+                        project.save(function (err) {
+                            // e. redirect to project page
+                            res.redirect(`/projects/${req.params.id}`);
+                        })
+                    } else {
+                        //if not...
+                        //a. save project to db and...
+                        project.save(function (err) {
+                            // b. redirect to project page
+                            res.redirect(`/projects/${req.params.id}`);
+                        })
+                    }
+                    //if user is not authorized OR has already approved this edit
                 } else {
-                    //if not...
-                    //redirect to project page
-                    res.redirect(`/projects/${req.params.id}`)
+                    res.redirect('/');
                 }
-            }
-        });
+            });
+        //if there is not a logged in user...
+    } else {
+        //redirect to home
+        res.redirect('/');
+    }
 }
 
 //submits an edit
@@ -86,7 +108,7 @@ function submit(req, res) {
                     //if the project has pending approvals...
                     if (project.approvals[0]) {
                         res.redirect(`/projects/${req.params.id}`)
-                    //if the project has no pending approvals...
+                        //if the project has no pending approvals...
                     } else {
                         //push the logged in user into the approvals array
                         project.approvals.push(req.user.id);
@@ -100,7 +122,7 @@ function submit(req, res) {
                             project.save(function (err) {
                                 res.redirect(`/projects/${req.params.id}`);
                             })
-                        //if users array is not the same length as approvals array (i.e., if there are multiple users on a project)
+                            //if users array is not the same length as approvals array (i.e., if there are multiple users on a project)
                         } else {
                             //make a pending version on the current project, with content from the submission and approved: false 
                             project.pendingVersion = { content: req.body.content, approved: false };
@@ -110,12 +132,12 @@ function submit(req, res) {
                             })
                         }
                     }
-                //if the logged in user is NOT an approved user for this project...
+                    //if the logged in user is NOT an approved user for this project...
                 } else {
                     res.redirect('/');
-                } 
+                }
             })
-    //if there is not a logged in user...
+        //if there is not a logged in user...
     } else {
         //redirect to home
         res.redirect('/');
@@ -136,7 +158,7 @@ function addUser(req, res) {
                     if (project.users.filter(user => user.id === req.body.inviteId)[0]) {
                         //redirect to project page
                         res.redirect(`/projects/${req.params.id}`);
-                    //if the user we are attempting to invite does not exist on the project's users array...
+                        //if the user we are attempting to invite does not exist on the project's users array...
                     } else {
                         //push the invited user into the project's user's array
                         project.users.push(req.body.inviteId);
@@ -146,12 +168,12 @@ function addUser(req, res) {
                             res.redirect(`/projects/${req.params.id}`);
                         });
                     }
-                //if current user is not authorized on this proj, redirect to home
+                    //if current user is not authorized on this proj, redirect to home
                 } else {
                     res.redirect('/');
                 }
             })
-    //if there is not a logged in user, redirect to home
+        //if there is not a logged in user, redirect to home
     } else {
         res.redirect('/');
     }
@@ -165,29 +187,29 @@ function searchResults(req, res) {
         let queriedProj;
         //c. query the database to find the project defined by the req.params.id, populating users array
         Project.findById(req.params.id)
-        .populate('users')
-        .then(function(project){
-            //d. if the logged in user is an authorized user on this project...
-            if (project.users.filter(user => user.id === req.user.id)[0]){
-                //e. assign queriedProj the project that we found in step c.
-                queriedProj = project;
-                //f. query the database for the user with the email address entered in the search
-                User.findOne({ email: req.body.email })                    
-                    .then(function (foundUser) {
-                        //g. render the page "projects/search-results", passing it the logged in user data, the user found from the search, and the project found from the req.params.id
-                        res.render('projects/search-results', {
-                            title: project.name,
-                            user: req.user,
-                            foundUser,
-                            project: queriedProj
+            .populate('users')
+            .then(function (project) {
+                //d. if the logged in user is an authorized user on this project...
+                if (project.users.filter(user => user.id === req.user.id)[0]) {
+                    //e. assign queriedProj the project that we found in step c.
+                    queriedProj = project;
+                    //f. query the database for the user with the email address entered in the search
+                    User.findOne({ email: req.body.email })
+                        .then(function (foundUser) {
+                            //g. render the page "projects/search-results", passing it the logged in user data, the user found from the search, and the project found from the req.params.id
+                            res.render('projects/search-results', {
+                                title: project.name,
+                                user: req.user,
+                                foundUser,
+                                project: queriedProj
+                            });
                         });
-                    });   
-            //if not, redirect to home
-            } else {
-                res.redirect('/');
-            }
-        })
-    //if not, redirect to home
+                    //if not, redirect to home
+                } else {
+                    res.redirect('/');
+                }
+            })
+        //if not, redirect to home
     } else {
         res.redirect('/');
     }
@@ -196,7 +218,7 @@ function searchResults(req, res) {
 //displays search page to find a user to add to project
 function searchPage(req, res) {
     //if there is a logged in user...
-    if (req.user){
+    if (req.user) {
         //query the db for project in req.params.id, populating the users array
         Project.findById(req.params.id)
             .populate('users')
@@ -209,12 +231,12 @@ function searchPage(req, res) {
                         user: req.user,
                         project
                     });
-                //if not, redirect to home
+                    //if not, redirect to home
                 } else {
                     res.redirect('/');
                 }
             });
-    //if not, redirect to home
+        //if not, redirect to home
     } else {
         res.redirect('/');
     }
@@ -229,7 +251,7 @@ function show(req, res, next) {
             .populate('users')
             .then(function (project) {
                 //if the logged in user is an approved user on the project...
-                if(project.users.filter(user => user.id === req.user.id)[0]){
+                if (project.users.filter(user => user.id === req.user.id)[0]) {
                     //if approvals array contains no data, proj is editable
                     if (!project.approvals[0]) {
                         res.render('projects/show-edit', {
@@ -237,7 +259,7 @@ function show(req, res, next) {
                             user: req.user,
                             project,
                         });
-                    //otherwise, it is locked
+                        //otherwise, it is locked
                     } else {
                         res.render('projects/show-lock', {
                             title: project.name,
@@ -245,12 +267,12 @@ function show(req, res, next) {
                             project,
                         });
                     }
-                //if not, redirect to home
+                    //if not, redirect to home
                 } else {
                     res.redirect('/');
                 }
             })
-    //if not, redirect to home
+        //if not, redirect to home
     } else {
         res.redirect('/');
     }
@@ -268,7 +290,7 @@ function index(req, res, next) {
                 projects
             });
         });
-    //if not, redirect to home
+        //if not, redirect to home
     } else {
         res.redirect('/');
     }
@@ -301,7 +323,7 @@ function create(req, res, next) {
             if (err) return res.redirect('/');
             res.redirect('projects');
         });
-    //if not, redirect to home
+        //if not, redirect to home
     } else {
         res.redirect('/');
     }

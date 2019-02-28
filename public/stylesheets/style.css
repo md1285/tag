@@ -19,7 +19,7 @@ a:hover {
 .content-display { 
   white-space: pre;
   height: 500px;
-  width: 75vw; 
+  word-wrap: normal;
 }
 
 .proj-name {
@@ -52,10 +52,23 @@ a:hover {
   margin: 10px 10px 10px 0;
 }
 
+/* styles list of projects on projects page */
 .coll-width {
   width: 60%;
 }
 
+/* styles project list items on projects page */
 .proj-item {
   font-size: 16px;
+}
+
+/* styles text in document display in locked view */
+.locked-display {
+  color: black;
+  padding: 5px;
+}
+
+textarea.materialize-textarea{
+  height: 25rem !important;
+  overflow-y: scroll;
 }

@@ -1,11 +1,23 @@
 <%- include ../partials/header.ejs %>
 <h4>Start a New Project</h4>
-<form class="project-form" action="/projects" method="POST">
-    <label>Project Name:
-        <input class="white proj-name" type="text" name="name">
-    </label>
-    <textarea class="white content-display" name="initVersion"></textarea>
-    <input class="btn" type="submit" value="Create">
-</form>
+<div class="row">
+    <form class="col s12" action="/projects" method="POST">
+        <div class="row">
+            <div class="input-field col s12">
+                <textarea id="textarea1" class="materialize-textarea white" name="name"></textarea>
+                <label for="textarea1">Project Name</label>
+            </div>
+        </div>
+        <div class="row">
+            <div class="input-field col s12">
+                <textarea id="textarea1" class="materialize-textarea white" name="initVersion"></textarea>
+                <label for="textarea1">Project Content</label>
+                <input class="btn" type="submit" value="Create">
+            </div>
+        </div>
+    </form>
+</div>
+
+
 
 <%- include ../partials/footer.ejs %>

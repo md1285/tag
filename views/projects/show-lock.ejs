@@ -3,7 +3,11 @@
     <h4 class="show-lock-h4"><%= project.name %></h4>
     <button class="btn approval-btn orange">Needs Approval</button>
 </div>
-<textarea readonly class="content-display white" cols="30" rows="10"><%= project.pendingVersion.content %></textarea>
+
+<% project.pendingVersion.content = project.pendingVersion.content.replace(/##/, '<span style="color:red">'); %>
+<% project.pendingVersion.content = project.pendingVersion.content.replace(/###/, '</span>'); %>
+
+<p class="white locked-display content-display"><%- project.pendingVersion.content %></p>
 
 <!-- below code activates approval button if current user is included in project but not in approvals -->
 <% if (JSON.stringify(project.users).includes(JSON.stringify(user.id)) && !JSON.stringify(project.approvals).includes(JSON.stringify(user.id))) { %>

@@ -18,4 +18,6 @@ router.post('/projects/:id/invite', projectsCtrl.addUser);
 router.get('/projects/:id/approve', projectsCtrl.approve);
 router.get('/projects/:id/reject', projectsCtrl.reject);
 
+router.get('/projects/:id/versions/:vid', projectsCtrl.version);
+
 module.exports = router;

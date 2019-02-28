@@ -1,6 +1,6 @@
 <%- include ../partials/header.ejs %>
 <% if (projects[0]) { %>
-<h4>My Projects</h4>
+<h2>My Projects</h2>
 <div class="collection coll-width">
     <% projects.forEach(function(project){ %>
     <a href="/projects/<%= project._id %>" class="collection-item proj-item"><%= project.name %></a>

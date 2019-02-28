@@ -1,6 +1,8 @@
 <%- include ../partials/header.ejs %>
+
 <div class="proj-name-hdr">
     <h2 class="proj-title"><%= project.name %></h2>
+
     <button class="dropdown-trigger btn hdr-btn" data-target="prev-vers-dropdown">View All Previous Versions 
         <i class="material-icons right">arrow_drop_down</i></button>
     <ul id="prev-vers-dropdown" class="dropdown-content">
@@ -16,23 +18,20 @@
         <% approval = 'clear' %>
         <% } %>
         <li><a href="/projects/<%= project.id %>/versions/<%= idx %>">
-            <%= version.createdAt.toLocaleDateString() + " " +  version.createdAt.toLocaleTimeString() + " "%>
+                <%= version.createdAt.toLocaleDateString() + " " +  version.createdAt.toLocaleTimeString() + " "%>
                 <i class="material-icons right"><%- approval %></i>
-            </a>
-        </li>
+            </a></li>
         <% }) %>
     </ul>
 </div>
 
 
 <form action="/projects/<%= project.id %>" method="POST">
-    <textarea class="materialize-textarea white large-textarea"
-    name="content"><%= project.getCurrentVersion().content %></textarea>
-    <br>
-    <p class="version-name">Current Version</p>
-    <input class="btn" type="submit" value="Save">
+    <textarea readonly class="materialize-textarea white large-textarea"
+    name="content"><%= version.content %></textarea>
 </form>
 
+<p class="version-name">Version: <%= version.createdAt.toLocaleDateString() + " " +  version.createdAt.toLocaleTimeString() %></p>
 
 
 <h2 class="collab">Collaborators:</h2>

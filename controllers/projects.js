@@ -11,7 +11,39 @@ module.exports = {
     addUser,
     submit,
     approve,
-    reject
+    reject,
+    version
+}
+
+function version(req, res) {
+    //if there is a logged in user...
+    if (req.user) {
+        //query the db to find the project with id === req.params.id
+        Project.findById(req.params.id)
+        .populate('users')
+        .then(function(project) {
+            //if logged in user is an approved user on project...
+            if (project.users.filter(user => user.id === req.user.id)[0]) {
+                //sort project versions from most to least recent
+                project.versions.sort(function(a, b){
+                    return b.updatedAt - a.updatedAt;
+                });
+                res.render('projects/version',{
+                    project,
+                    version: project.versions[req.params.vid],
+                    user: req.user
+                });
+            //if logged in user is not an approved user on project...
+            } else {
+                //redirect to home
+                res.redirect('/');
+            }
+        });
+    //if there is not a logged in user...
+    } else {
+        //redirect to home
+        res.redirect('/');
+    }
 }
 
 //rejects an edit
@@ -249,8 +281,9 @@ function show(req, res, next) {
         //find the project in the req.params.id, populating the users...
         Project.findById(req.params.id)
             .populate('users')
+            .populate('approvals')
             .then(function (project) {
-                //if the logged in user is an approved user on the project...
+                //if the logged in user is a user on the project...
                 if (project.users.filter(user => user.id === req.user.id)[0]) {
                     //if approvals array contains no data, proj is editable
                     if (!project.approvals[0]) {
@@ -265,6 +298,7 @@ function show(req, res, next) {
                             title: project.name,
                             user: req.user,
                             project,
+                            approvals: project.approvals
                         });
                     }
                     //if not, redirect to home

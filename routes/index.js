@@ -4,7 +4,7 @@ const passport = require('passport');
 const indexCtrl = require('../controllers/index');
 
 
-/* GET home page. */
+/* index and about routes. */
 router.get('/', indexCtrl.index);
 router.get('/about', indexCtrl.about);
 

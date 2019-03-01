@@ -1,4 +1,5 @@
 <%- include ../partials/header.ejs %>
+
 <div class="proj-name-hdr">
     <div class="proj-name-hdr-left">
         <h2 class="proj-title"><%= project.name %></h2>
@@ -24,16 +25,16 @@
             </li>
             <% }) %>
         </ul>
-        <!-- Modal Trigger -->
+        <!-- modal -->
         <a class="btn modal-trigger red btn-spcr" href="#remove">Remove
             <i class="material-icons right">delete</i>
         </a>
-        <!-- Modal Structure -->
         <div id="remove" class="modal">
             <div class="modal-content black remove-modal">
                 <p>Remove this item from your projects list? This action cannot be undone.</p>
                 <form action="/projects/<%= project._id %>?_method=DELETE" method="POST">
-                    <button class="btn red" href="/projects/<%= project._id %>/delete">Yes, Remove this from My Projects</button>
+                    <button class="btn red" href="/projects/<%= project._id %>/delete">Yes, Remove this from My
+                        Projects</button>
                 </form>
             </div>
             <div class="modal-footer">
@@ -44,13 +45,10 @@
     </div>
 </div>
 
-
-
 <form action="/projects/<%= project.id %>" method="POST">
     <textarea class="materialize-textarea white large-textarea"
         name="content"><%= project.getCurrentVersion().content %></textarea>
     <br>
-
     <div class="bottom-container">
         <div class="bottom-container-left">
             <p class="version-name">Current Version</p>
@@ -58,14 +56,8 @@
         <div class="bottom-container-right">
             <input class="btn" type="submit" value="Submit Edit">
         </div>
-
-
     </div>
-
-
-
 </form>
-
 
 <h2 class="collab">Collaborators:</h2>
 <ul>
@@ -75,7 +67,6 @@
     </li>
     <% }); %>
 </ul>
-
 
 <a class="btn" href="/projects/<%= project._id %>/search">Add new collaborator</a>
 

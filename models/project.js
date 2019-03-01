@@ -9,9 +9,8 @@ const versionSchema = new Schema({
     },
     approved: Boolean
 }, {
-    timestamps: true
-});
-
+        timestamps: true
+    });
 
 const projectSchema = new Schema({
     name: {
@@ -20,7 +19,7 @@ const projectSchema = new Schema({
         default: ''
     },
     users: [{
-        type: Schema.Types.ObjectId, 
+        type: Schema.Types.ObjectId,
         ref: 'User'
     }],
     versions: [versionSchema],
@@ -30,23 +29,20 @@ const projectSchema = new Schema({
         ref: 'User'
     }],
 }, {
-    timestamps: true
-});
+        timestamps: true
+    });
 
-projectSchema.methods.getCurrentVersion = function() {
-        // The 'this' keyword is this project document
-        // Find and return the current version
-
-        //grab all versions
-        return this.versions
+projectSchema.methods.getCurrentVersion = function () {
+    //grab all versions
+    return this.versions
         //sort them in reverse chronological order
-        .sort(function(a, b){
+        .sort(function (a, b) {
             return b.updatedAt - a.updatedAt;
         })
         //find the latest one that is approved
-        .find(function(version){
+        .find(function (version) {
             return version.approved === true;
         });
-  } 
-  
+}
+
 module.exports = mongoose.model('Project', projectSchema);

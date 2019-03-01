@@ -187,8 +187,8 @@ function approve(req, res) {
                             // e. redirect to project page
                             res.redirect(`/projects/${req.params.id}`);
                         })
-                    } else {
                         //if not...
+                    } else {
                         //a. save project to db and...
                         project.save(function (err) {
                             // b. redirect to project page
@@ -443,4 +443,3 @@ function create(req, res, next) {
         res.redirect('/');
     }
 }
-

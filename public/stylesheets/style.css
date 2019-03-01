@@ -52,10 +52,6 @@ a:hover {
 
 .proj-name-hdr {
   width: 85vw;
-  /* display: flex;
-  flex-direction: row;
-  justify-content: flex-start;
-  align-items: center; */
   margin-bottom: 5px;
   display: grid;
   grid-template-rows: 1fr;
@@ -79,8 +75,6 @@ a:hover {
   align-items: center;
 }
 
-
-
 .proj-title {
   padding: 0;
   margin: 10px 10px 10px 0;
@@ -101,7 +95,6 @@ a:hover {
 .locked-display {
   color: black;
   padding: 5px;
-  /* white-space: pre; */
   height: 500px;
   word-wrap: normal;
 }

@@ -2,12 +2,8 @@
 
     <h3>Search Results</h3>
     <div>
-        <p>
-            User: <%= foundUser.name %>
-        </p>
-        <p>
-            Email: <%= foundUser.email %>
-        </p>
+        <p>User: <%= foundUser.name %></p>
+        <p>Email: <%= foundUser.email %></p>
         <% if (JSON.stringify(project.users).includes(JSON.stringify(foundUser.id))) { %>
             <p><%= foundUser.name.match(/[^\s]+/) %> is already collaborating on <%= title %></p>
         <% } else { %>
@@ -16,4 +12,5 @@
         </form>
         <% } %>
     </div>
+
 <%- include ../partials/footer.ejs %>

@@ -1,80 +1,96 @@
 <%- include ../partials/header.ejs %>
 <div class="proj-name-hdr">
+  <div class="proj-name-hdr-left">
     <h2 class="proj-title"><%= project.name %></h2>
-    <button class="dropdown-trigger btn hdr-btn" data-target="prev-vers-dropdown">View All Previous Versions 
-            <i class="material-icons right">arrow_drop_down</i></button>
-        <ul id="prev-vers-dropdown" class="dropdown-content">
-            <li><a href="/projects/<%= project.id %>">Current Version</a></li>            
-            <% project.versions.sort(function(a, b){ %>
-            <% return b.updatedAt - a.updatedAt; %>
-            <% }) %>
-            <% project.versions.forEach(function(version, idx){ %>
-            <% let approval; %>
-            <% if (version.approved === true) { %>
-            <% approval = 'check' %>
-            <% } else { %>
-            <% approval = 'clear' %>
-            <% } %>
-            <li><a href="/projects/<%= project.id %>/versions/<%= idx %>">
-                    <%= version.createdAt.toLocaleDateString() + " " +  version.createdAt.toLocaleTimeString() + " "%>
-                    <i class="material-icons right"><%- approval %></i>
-                </a></li>
-            <% }) %>
-        </ul>
-    
-
-    
-
-      <!-- Modal Trigger -->
-  <a class="btn modal-trigger orange hdr-btn" href="#approvals">Needs Approval
-        <i class="material-icons right">warning</i>
-        <i class="material-icons left">warning</i>
-  </a>
-
-  <!-- Modal Structure -->
-  <div id="approvals" class="modal">
-    <div class="modal-content black">
-
-      <h2>Awaiting Approval From:</h2>
-      <ul>
-
-        <!-- <% noApprovalUsers = project.users.filter(user => !JSON.stringify(project.approvals).includes(JSON.stringify(user.id))) %> -->
-        <% noApprovalUsers = project.users.filter(user => !JSON.stringify(project.approvals).includes(JSON.stringify(user.id))) %>
-        <% noApprovalUsers.forEach(function(user){ %>
+    <!-- Modal Trigger -->
+    <a class="btn modal-trigger orange btn-spcr" href="#approvals">
+      <i class="material-icons">warning</i>
+    </a>
+    <!-- Modal Structure -->
+    <div id="approvals" class="modal">
+      <div class="modal-content black">
+        <h2>Awaiting Approval From:</h2>
+        <ul>
+          <!-- <% noApprovalUsers = project.users.filter(user => !JSON.stringify(project.approvals).includes(JSON.stringify(user.id))) %> -->
+          <% noApprovalUsers = project.users.filter(user => !JSON.stringify(project.approvals).includes(JSON.stringify(user.id))) %>
+          <% noApprovalUsers.forEach(function(user){ %>
           <li><%= user.name %>, <%= user.email %> </li>
-        <% }) %>
-      </ul>
-
+          <% }) %>
+        </ul>
+      </div>
+      <div class="modal-footer">
+        <a class="modal-close waves-effect waves-green btn-flat">Return</a>
+      </div>
     </div>
-    <div class="modal-footer">
-      <a class="modal-close waves-effect waves-green btn-flat">Close</a>
-    </div>
+    <!-- end modal -->
   </div>
-
+  <div class="proj-name-hdr-right">
+    <button class="dropdown-trigger btn btn-spcr" data-target="prev-vers-dropdown">View All Previous Versions
+      <i class="material-icons right">arrow_drop_down</i></button>
+    <ul id="prev-vers-dropdown" class="dropdown-content">
+      <% project.versions.sort(function(a, b){ %>
+      <% return b.createdAt - a.createdAt; %>
+      <% }) %>
+      <% project.versions.forEach(function(version, idx){ %>
+      <% let approval; %>
+      <% if (version.approved === true) { %>
+      <% approval = 'check' %>
+      <% } else { %>
+      <% approval = 'clear' %>
+      <% } %>
+      <li><a href="/projects/<%= project.id %>/versions/<%= idx %>">
+          <%= version.createdAt.toLocaleDateString() + " " +  version.createdAt.toLocaleTimeString() + " "%>
+          <i class="material-icons right"><%- approval %></i>
+        </a></li>
+      <% }) %>
+    </ul>
+    <!-- Modal Trigger -->
+    <a class="btn modal-trigger red btn-spcr" href="#remove">Remove
+      <i class="material-icons right">delete</i>
+    </a>
+    <!-- Modal Structure -->
+    <div id="remove" class="modal">
+      <div class="modal-content black remove-modal">
+        <p>Remove this item from your projects list? This action cannot be undone.</p>
+        <form action="/projects/<%= project._id %>?_method=DELETE" method="POST">
+          <button class="btn red" href="/projects/<%= project._id %>/delete">Yes, Remove this from My Projects</button>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <a class="modal-close btn-flat">Return</a>
+      </div>
+    </div>
+    <!-- end modal -->
+  </div>
 </div>
 
 <textarea readonly class="materialize-textarea white large-textarea"
-name="content"><%= project.pendingVersion.content %></textarea>
-<p class="version-name">Current Version</p>
+  name="content"><%= project.pendingVersion.content %></textarea>
 
-<!-- below code activates approval button if current user is included in project but not in approvals -->
-<% if (JSON.stringify(project.users).includes(JSON.stringify(user.id)) && !JSON.stringify(project.approvals).includes(JSON.stringify(user.id))) { %>
-  <br>
-    <a href="/projects/<%= project.id %>/approve" class="btn">Approve Edit</a>
-    <a href="/projects/<%= project.id %>/reject" class="btn red">Reject Edit</a>
+<div class="bottom-container">
+  <div class="bottom-container-left">
+    <p class="version-name">Pending Version</p>
+  </div>
+  <div class="bottom-container-right">
+    <!-- below code activates approval button if current user is included in project but not in approvals -->
+    <% if (JSON.stringify(project.users).includes(JSON.stringify(user.id)) && !JSON.stringify(project.approvals).includes(JSON.stringify(user.id))) { %>
+    <br>
+    <a href="/projects/<%= project.id %>/approve" class="btn btn-spcr">Approve Edit</a>
+    <a href="/projects/<%= project.id %>/reject" class="btn red btn-spcr">Reject Edit</a>
     <% } %>
-    
+  </div>
+</div>
+
+
 <h2 class="collab">Collaborators:</h2>
 <ul>
-    <% project.users.forEach(function(u){ %>
-    <li>
-        <%= u.name %>, <%= u.email %>
-    </li>
-    <% }); %>
+  <% project.users.forEach(function(u){ %>
+  <li>
+    <%= u.name %>, <%= u.email %>
+  </li>
+  <% }); %>
 </ul>
 
-<% if (JSON.stringify(project.users).includes(JSON.stringify(user.id)))  {%>
-<a class="btn" href="/projects/<%= project._id %>/search">Invite collaborators</a>
-<% } %>
+<a class="btn" href="/projects/<%= project._id %>/search">Add new collaborator</a>
 
 <%- include ../partials/footer.ejs %>

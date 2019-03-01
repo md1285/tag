@@ -10,6 +10,7 @@ router.get('/projects/', projectsCtrl.index);
 
 router.get('/projects/:id', projectsCtrl.show);
 router.post('/projects/:id', projectsCtrl.submit);
+router.delete('/projects/:id', projectsCtrl.delete);
 
 router.get('/projects/:id/search', projectsCtrl.searchPage);
 router.post('/projects/:id/search', projectsCtrl.searchResults);

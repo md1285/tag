@@ -1,6 +1,5 @@
 body {
   padding: 15px 35px;
-  /* font: 14px "Lucida Grande", Helvetica, Arial, sans-serif; */
   font-family: 'Montserrat', sans-serif;
 }
 
@@ -23,10 +22,11 @@ h2 {
 
 a {
   color: #26A59A;
+
 }
 
 a:hover {
-  text-decoration: underline;
+  text-decoration: none;
 }
 
 .project-form {
@@ -51,21 +51,40 @@ a:hover {
 }
 
 .proj-name-hdr {
-  display: flex;
+  width: 85vw;
+  /* display: flex;
   flex-direction: row;
   justify-content: flex-start;
-  align-items: center;
+  align-items: center; */
   margin-bottom: 5px;
+  display: grid;
+  grid-template-rows: 1fr;
+  grid-template-columns: 3fr 2fr;
+  grid-template-areas: 
+  "left right"
+}
+
+.proj-name-hdr-left {
+  grid-area: left;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+
+.proj-name-hdr-right {
+  grid-area: right;
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-end;
+  align-items: center;
 }
 
 
-/* .approval-btn:hover {
-  cursor: default;
-} */
 
 .proj-title {
   padding: 0;
   margin: 10px 10px 10px 0;
+  display: inline;
 }
 
 /* styles list of projects on projects page */
@@ -93,6 +112,7 @@ textarea.large-textarea{
   height: 35rem !important;
   overflow-y: scroll;
   margin-bottom: 5px;
+  margin-top: -12px;
 }
 
 .dropdown-menus {
@@ -100,7 +120,7 @@ textarea.large-textarea{
   margin: 0 20px;
 }
 
-.hdr-btn {
+.btn-spcr {
   margin: 0 2px;
 }
 
@@ -110,5 +130,57 @@ textarea.large-textarea{
 }
 
 .collab {
-  margin: 35px 0 10px 0;
+  margin: 25px 0 10px 0;
+}
+
+.bottom-container {
+  width: 85vw;
+  display: grid;
+  grid-template-rows: 1fr;
+  grid-template-columns: 1fr 1fr;
+  grid-template-areas: 
+  "left right"
+}
+
+.bottom-container-left {
+  grid-area: left;
+}
+
+.bottom-container-right {
+  grid-area: right;
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-end;
+}
+
+.search-bar-container {
+  width: 60%;
+}
+
+.remove-modal {
+  text-align: center;
+}
+
+.btn {
+  font-family: 'Montserrat', sans-serif;
+}
+
+button {
+  font-family: 'Montserrat', sans-serif;
+}
+
+.title-input {
+  width: 85vw;
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  align-items: flex-end;
+}
+
+.create-btn-wrapper {
+  width: 85vw;
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-end;
+  align-items: center;
 }

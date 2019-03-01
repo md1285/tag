@@ -12,7 +12,86 @@ module.exports = {
     submit,
     approve,
     reject,
-    version
+    version,
+    delete: deleteProject
+}
+
+function deleteProject(req, res) {
+    //if there is a user logged in...
+    if (req.user) {
+        //query the db for the project with the req.params.id
+        Project.findById(req.params.id)
+            .populate('users')
+            .populate('approvals')
+            .then(function (project) {
+                //if logged in user is a user on project...
+                if (project.users.filter(user => user.id === req.user.id)[0]) {
+                    //remove current user from approvals and users arrays
+                    project.approvals = project.approvals.filter(user => user.id !== req.user.id);
+                    project.users = project.users.filter(user => user.id !== req.user.id);
+                    // if users array is empty 
+                    if (!project.users[0]) {
+                        // delete project and redirect
+                        project.delete(function(err){
+                            res.redirect('/projects');
+                        });
+                    //if users array is not empty    
+                    } else {
+                        // if pending version does not exist
+                        if (!project.pendingVersion) {
+                            //save project and exit without modifying versions at all
+                            project.save(function(err){
+                                res.redirect('/projects');
+                            });
+                        // if PV does exist  
+                        } else {
+                            //if approvals is empty
+                            if (project.approvals.length === 0) {
+                                project.pendingVersion.approved = false;
+                                project.versions.push(project.pendingVersion);
+                                //set pending version to null
+                                project.pendingVersion = null;
+                                //save project and redirect to project page
+                                project.save(function (err) {
+                                    res.redirect('/projects/');
+                                })
+                            //if approvals is not empty
+                            } else {
+                                // if approvals.length === users.length 
+                                if (project.approvals.length === project.users.length) {
+                                    // a. push the pendingVersion into the versions array with approved: true, 
+                                    project.pendingVersion.approved = true;
+                                    project.versions.push(project.pendingVersion);
+                                    // b. clear out the approvals array
+                                    project.approvals = [];
+                                    // c. set pending version to null
+                                    project.pendingVersion = null;
+                                    // d. save project
+                                    project.save(function (err) {
+                                        // e. redirect to project page
+                                        res.redirect('/projects/');
+                                    })    
+                                //if approvals.length !== users.length
+                                } else {
+                                    // save project and exit without modifying versions at all
+                                    project.save(function(err){
+                                        res.redirect('/projects');
+                                    });
+                                }
+                            }
+                        }
+                    }
+                //if logged in user is not a user on project...
+                } else {
+                    //redirect to home
+                    res.redirect('/');
+                }
+            })
+        //if there is no user logged in...
+    } else {
+        //redirect to home
+        res.redirect('/');
+    }
 }
 
 function version(req, res) {
@@ -20,26 +99,26 @@ function version(req, res) {
     if (req.user) {
         //query the db to find the project with id === req.params.id
         Project.findById(req.params.id)
-        .populate('users')
-        .then(function(project) {
-            //if logged in user is an approved user on project...
-            if (project.users.filter(user => user.id === req.user.id)[0]) {
-                //sort project versions from most to least recent
-                project.versions.sort(function(a, b){
-                    return b.updatedAt - a.updatedAt;
-                });
-                res.render('projects/version',{
-                    project,
-                    version: project.versions[req.params.vid],
-                    user: req.user
-                });
-            //if logged in user is not an approved user on project...
-            } else {
-                //redirect to home
-                res.redirect('/');
-            }
-        });
-    //if there is not a logged in user...
+            .populate('users')
+            .then(function (project) {
+                //if logged in user is an approved user on project...
+                if (project.users.filter(user => user.id === req.user.id)[0]) {
+                    //sort project versions from most to least recent
+                    project.versions.sort(function (a, b) {
+                        return b.updatedAt - a.updatedAt;
+                    });
+                    res.render('projects/version', {
+                        project,
+                        version: project.versions[req.params.vid],
+                        user: req.user
+                    });
+                    //if logged in user is not an approved user on project...
+                } else {
+                    //redirect to home
+                    res.redirect('/');
+                }
+            });
+        //if there is not a logged in user...
     } else {
         //redirect to home
         res.redirect('/');
@@ -67,7 +146,7 @@ function reject(req, res) {
                     project.save(function (err) {
                         res.redirect(`/projects/${req.params.id}`);
                     })
-                //if the logged in user is NOT in the project's users array
+                    //if the logged in user is NOT in the project's users array
                 } else {
                     //redirect to home
                     res.redirect('/');

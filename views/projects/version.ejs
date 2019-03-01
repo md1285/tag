@@ -1,37 +1,66 @@
 <%- include ../partials/header.ejs %>
 
 <div class="proj-name-hdr">
-    <h2 class="proj-title"><%= project.name %></h2>
+    <div class="proj-name-hdr-left">
+        <h2 class="proj-title"><%= project.name %></h2>
+    </div>
+    <div class="proj-name-hdr-right">
+        <button class="dropdown-trigger btn btn-spcr" data-target="prev-vers-dropdown">View All Previous Versions
+            <i class="material-icons right">arrow_drop_down</i></button>
+        <ul id="prev-vers-dropdown" class="dropdown-content">
 
-    <button class="dropdown-trigger btn hdr-btn" data-target="prev-vers-dropdown">View All Previous Versions 
-        <i class="material-icons right">arrow_drop_down</i></button>
-    <ul id="prev-vers-dropdown" class="dropdown-content">
-        <li><a href="/projects/<%= project.id %>">Current Version</a></li>
-        <% project.versions.sort(function(a, b){ %>
-        <% return b.updatedAt - a.updatedAt; %>
-        <% }) %>
-        <% project.versions.forEach(function(version, idx){ %>
-        <% let approval; %>
-        <% if (version.approved === true) { %>
-        <% approval = 'check' %>
-        <% } else { %>
-        <% approval = 'clear' %>
-        <% } %>
-        <li><a href="/projects/<%= project.id %>/versions/<%= idx %>">
-                <%= version.createdAt.toLocaleDateString() + " " +  version.createdAt.toLocaleTimeString() + " "%>
-                <i class="material-icons right"><%- approval %></i>
-            </a></li>
-        <% }) %>
-    </ul>
+            <% if (project.pendingVersion) { %>
+            <li><a href="/projects/<%= project.id %>">Pending Version</a></li>
+            <% } else { %>
+            <li><a href="/projects/<%= project.id %>">Current Version</a></li>
+            <% } %>
+
+            <% project.versions.sort(function(a, b){ %>
+            <% return b.createdAt - a.createdAt; %>
+            <% }) %>
+            <% project.versions.forEach(function(version, idx){ %>
+            <% let approval; %>
+            <% if (version.approved === true) { %>
+            <% approval = 'check' %>
+            <% } else { %>
+            <% approval = 'clear' %>
+            <% } %>
+            <li><a href="/projects/<%= project.id %>/versions/<%= idx %>">
+                    <%= version.createdAt.toLocaleDateString() + " " +  version.createdAt.toLocaleTimeString() + " "%>
+                    <i class="material-icons right"><%- approval %></i>
+                </a></li>
+            <% }) %>
+        </ul>
+        <!-- Modal Trigger -->
+        <a class="btn modal-trigger red btn-spcr" href="#remove">Remove
+            <i class="material-icons right">delete</i>
+        </a>
+        <!-- Modal Structure -->
+        <div id="remove" class="modal">
+            <div class="modal-content black remove-modal">
+                <p>Remove this item from your projects list? This action cannot be undone.</p>
+                <form action="/projects/<%= project._id %>?_method=DELETE" method="POST">
+                    <button class="btn red" href="/projects/<%= project._id %>/delete">Yes, Remove this from My
+                        Projects</button>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <a class="modal-close btn-flat">Return</a>
+            </div>
+        </div>
+        <!-- end modal -->
+
+    </div>
 </div>
 
 
 <form action="/projects/<%= project.id %>" method="POST">
     <textarea readonly class="materialize-textarea white large-textarea"
-    name="content"><%= version.content %></textarea>
+        name="content"><%= version.content %></textarea>
 </form>
 
-<p class="version-name">Version: <%= version.createdAt.toLocaleDateString() + " " +  version.createdAt.toLocaleTimeString() %></p>
+<p class="version-name">Version:
+    <%= version.createdAt.toLocaleDateString() + " " +  version.createdAt.toLocaleTimeString() %></p>
 
 
 <h2 class="collab">Collaborators:</h2>
@@ -44,8 +73,6 @@
 </ul>
 
 
-<% if (JSON.stringify(project.users).includes(JSON.stringify(user.id)))  {%>
 <a class="btn" href="/projects/<%= project._id %>/search">Add new collaborator</a>
-<% } %>
 
 <%- include ../partials/footer.ejs %>

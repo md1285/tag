@@ -17,8 +17,8 @@
   <nav class="black center-align">
     <% if (user) { %>
     <a href="/logout" class="btn">Log Out</a>
-      <a href="/projects" class="btn">Projects</a>
-      <a href="/about" class="btn">About</a>
+    <a href="/projects" class="btn">Projects</a>
+    <a href="/about" class="btn">About</a>
     <% } else { %>
     <a href="/auth/google" class="btn">Login with Google</a>
     <% } %>
@@ -27,5 +27,7 @@
   <% if (user) { %>
   <p class="welcome">Hello, <%= user.name.match(/[^\s]+/) %></p>
   <% } else { %>
+  <% if (title !== "About") { %>
   <p class="welcome">Welcome to Tag</p>
+  <% } %>
   <% } %>

@@ -6,6 +6,7 @@ const indexCtrl = require('../controllers/index');
 
 /* GET home page. */
 router.get('/', indexCtrl.index);
+router.get('/about', indexCtrl.about);
 
 //authentication routes
 router.get('/auth/google', passport.authenticate(

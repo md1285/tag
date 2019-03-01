@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Tag</title>
+    <link href="https://fonts.googleapis.com/css?family=Montserrat" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link type="text/css" rel="stylesheet" href="/stylesheets/materialize.min.css" media="screen,projection" />
+    <link rel='stylesheet' href='/stylesheets/style.css' />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <script defer src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script defer type="text/javascript" src="/javascripts/materialize.min.js"></script>
+    <script defer type="text/javascript" src="/javascripts/main.js"></script>
+</head>
+
+<body class="black white-text">
+    <nav class="black center-align">
+        <% if (user) { %>
+        <a href="/logout" class="btn">Log Out</a>
+        <% if (title !== 'All Projects Page') { %>
+        <a href="/projects" class="btn">Projects</a>
+        <% } %>
+        <% } else { %>
+        <a href="/auth/google" class="btn">Login with Google</a>
+        <% } %>
+        <a href="/about" class="btn">About</a>
+    </nav>
+    <h1>Tag</h1>
+    <% if (user) { %>
+    <p class="welcome">Hello, <%= user.name.match(/[^\s]+/) %></p>
+    <% }   %>
+    <br>
+
+    <div class="about-container">
+        <p class="about">
+            Welcome to Tag, a version control application for creative collaboration!
+        </p>
+        <br>
+
+        <p class="about">
+            With tag, you can collaborate on articles, scripts, stories and more with as many collaborators as you like.
+        </p>
+        <br>
+
+        <p class="about">
+            To start, simply log in with Google.
+        </p>
+        <br>
+
+        <p class="about">
+            From here, you can view any projects you may already have, including projects collaborators may have added
+            you on. You can also create a new project.
+        </p>
+        <br>
+
+        <p class="about">
+            You can view your project by clicking the link on your Projects page. From here, you can add content to your
+            project, submit edits, view previous versions, and add collaborators to your project.
+        </p>
+        <br>
+
+        <p class="about">
+            When working on a project with collaborators, each edit must be reviewed by all collaborators for approval.
+            You can tell when a project has pending approvals by the yellow warning icon next to the project’s name, and
+            by the fact that a project with pending approvals cannot be edited.
+        </p>
+        <br>
+
+        <p class="about">
+            If all collaborators on a project approve an edit, that edit becomes the project’s master version, and the
+            project can once again accept edits.
+        </p>
+        <br>
+
+        <p class="about">
+            If any collaborator on a project rejects an edit, the document reverts to the previous version.
+        </p>
+        <br>
+
+        <p class="about">
+            Enjoy!
+        </p>
+    </div>
+
+    <%- include ./partials/footer.ejs %>

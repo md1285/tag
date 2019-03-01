@@ -184,3 +184,11 @@ button {
   justify-content: flex-end;
   align-items: center;
 }
+
+.about {
+  margin: 5px;
+}
+
+.about-container {
+  width: 60%;
+}

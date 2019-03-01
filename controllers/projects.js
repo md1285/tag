@@ -110,7 +110,8 @@ function version(req, res) {
                     res.render('projects/version', {
                         project,
                         version: project.versions[req.params.vid],
-                        user: req.user
+                        user: req.user,
+                        title: project.name
                     });
                     //if logged in user is not an approved user on project...
                 } else {
@@ -398,7 +399,7 @@ function index(req, res, next) {
         //query the db for all projects that include logged in user and display them
         Project.find({ users: { $in: [req.user] }, }, function (err, projects) {
             res.render('projects', {
-                title: 'My Projects',
+                title: 'All Projects Page',
                 user: req.user,
                 projects
             });
@@ -408,12 +409,13 @@ function index(req, res, next) {
         res.redirect('/');
     }
 }
+
 //displays new projects page
 function newProject(req, res, next) {
     if (req.user) {
         res.render('projects/new', {
-            title: 'New Project Page',
             user: req.user,
+            title: 'New Project Page'
         });
     } else {
         res.redirect('/');

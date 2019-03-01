@@ -5,7 +5,7 @@ module.exports = {
     about
 }
 
-function about(req, res){
+function about(req, res) {
     res.render('about', {
         title: 'About',
         user: req.user
@@ -13,8 +13,12 @@ function about(req, res){
 }
 
 function index(req, res, next) {
-    res.render('index', { 
-        title: 'Landing',
-        user: req.user,
-    });
-  }
+    if (req.user) {
+        res.render('index', {
+            title: 'Landing',
+            user: req.user,
+        });
+    } else {
+        res.redirect('/about');
+    }
+}

@@ -17,13 +17,11 @@
     <nav class="black center-align">
         <% if (user) { %>
         <a href="/logout" class="btn">Log Out</a>
-        <% if (title !== 'All Projects Page') { %>
         <a href="/projects" class="btn">Projects</a>
-        <% } %>
+        <a href="/about" class="btn">About</a>
         <% } else { %>
         <a href="/auth/google" class="btn">Login with Google</a>
         <% } %>
-        <a href="/about" class="btn">About</a>
     </nav>
     <h1>Tag</h1>
     <% if (user) { %>

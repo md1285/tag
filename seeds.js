@@ -28,22 +28,3 @@ Project.deleteMany({})
 .then(function(){
     process.exit();
 });
-
-// Project.deleteMany({})
-// .then(function(){
-//     User.deleteMany({});
-// })
-// .then(function(){
-//     Project.create(data.projects);
-// })
-// .then(function(){
-//     User.create(data.users);
-// })
-// .then(function(){
-//     process.exit;
-// });
-
-// Project.deleteMany({})
-// .then(function(){
-//     process.exit;
-// });

@@ -15,11 +15,11 @@ router.delete('/projects/:id', projectsCtrl.delete);
 router.get('/projects/:id/search', projectsCtrl.searchPage);
 router.post('/projects/:id/search', projectsCtrl.searchResults);
 
-router.post('/projects/:id/invite', projectsCtrl.addUser);
+router.post('/projects/:id/users', projectsCtrl.addUser);
 
-router.get('/projects/:id/approve', projectsCtrl.approve);
+router.get('/projects/:id/approvals', projectsCtrl.approve);
 
-router.get('/projects/:id/reject', projectsCtrl.reject);
+router.get('/projects/:id/rejections', projectsCtrl.reject);
 
 router.get('/projects/:id/versions/:vid', projectsCtrl.version);
 

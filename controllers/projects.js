@@ -306,16 +306,20 @@ function searchResults(req, res) {
                     //e. assign queriedProj the project that we found in step c.
                     queriedProj = project;
                     //f. query the database for the user with the email address entered in the search
-                    User.findOne({ email: req.body.email })
+                        User.findOne({ email: req.body.email })
                         .then(function (foundUser) {
                             //g. render the page "projects/search-results", passing it the logged in user data, the user found from the search, and the project found from the req.params.id
-                            res.render('projects/search-results', {
-                                title: project.name,
-                                user: req.user,
-                                foundUser,
-                                project: queriedProj
+                                if (foundUser) {
+                                    res.render('projects/search-results', {
+                                        title: project.name,
+                                        user: req.user,
+                                        foundUser,
+                                        project: queriedProj
+                                    });
+                                } else {
+                                    res.redirect('back');
+                                }
                             });
-                        });
                     //if not, redirect to home
                 } else {
                     res.redirect('/');

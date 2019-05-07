@@ -7,7 +7,7 @@
         <% if (JSON.stringify(project.users).includes(JSON.stringify(foundUser.id))) { %>
             <p><%= foundUser.name.match(/[^\s]+/) %> is already collaborating on <%= title %></p>
         <% } else { %>
-        <form action="/projects/<%= project.id %>/invite" method="POST">
+        <form action="/projects/<%= project.id %>/users" method="POST">
             <button class="btn" name="inviteId" value="<%= foundUser.id %>">Add <%= foundUser.name.match(/[^\s]+/) %> to <%= title %></button>
         </form>
         <% } %>

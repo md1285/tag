@@ -72,8 +72,8 @@
   <div class="bottom-container-right">
     <% if (JSON.stringify(project.users).includes(JSON.stringify(user.id)) && !JSON.stringify(project.approvals).includes(JSON.stringify(user.id))) { %>
     <br>
-    <a href="/projects/<%= project.id %>/approve" class="btn btn-spcr">Approve Edit</a>
-    <a href="/projects/<%= project.id %>/reject" class="btn red btn-spcr">Reject Edit</a>
+    <a href="/projects/<%= project.id %>/approvals" class="btn btn-spcr">Approve Edit</a>
+    <a href="/projects/<%= project.id %>/rejections" class="btn red btn-spcr">Reject Edit</a>
     <% } %>
   </div>
 </div>

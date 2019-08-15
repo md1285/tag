@@ -3,7 +3,7 @@
 
 ### Overview
 
-Welcome to Tag, a version control application for creative collaboration!
+Welcome to Tag, a version control application for creative collaboration.
 
 <img src="./imgs/login_screenshot.png">
 
